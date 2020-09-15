@@ -9,7 +9,7 @@ license = "BSD-3-Clause"
 python = "^3.7.3"
 pydantic = "^1.6.1"
 rpyc = "^4.1.5"
-loguru = "^0.5.2"
+cryptography = "^3.1"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
@@ -22,6 +22,9 @@ mccabe = "^0.6.1"
 bandit = "^1.6.2"
 pep8-naming = "^0.11.1"
 flake8-docstrings = "^1.5.0"
+
+[tool.black]
+line-length = 88
 
 [build-system]
 requires = ["poetry>=0.12"]

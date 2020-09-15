@@ -5,7 +5,7 @@
   <br/>
   <div style="color: #808080; font-style:italic;">
     <h3>
-      ROUTING POLICY
+      ROUTE SERVER AGENT
     </h3>
   </div>
 
@@ -13,9 +13,4 @@
 
 <hr/>
 
-This repository contains code used for automatically generating routing policy for [48 IX](https://48ix.net):
-
-| Directory        | Information                         |
-| :--------------- | :---------------------------------- |
-| `/policies`      | Generated Policies                  |
-| `/routingpolicy` | Policy Templates & Generation Logic |
+This repository contains code used for automated internal management of [48 IX](https://48ix.net) route servers.
