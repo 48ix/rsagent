@@ -78,18 +78,18 @@ class Agent(Service):
             valid = validate_config(policy_file)
 
             if not valid:
-                raise RuntimeError(f"Config {self.digest_decrypted} failed validation.")
+                raise RuntimeError("Config failed validation.")
 
             merged = merge_config(policy_file)
 
             if not merged:
-                raise RuntimeError(
-                    f"Merge of config {self.digest_decrypted} failed, check the logs."
-                )
+                raise RuntimeError("Config validated, but config merge failed.")
 
-            result = f"Successfully Merged Configuration {self.digest_decrypted}"
+            result = "Successfully merged configuration."
+            log.info(f"{self.digest_decrypted}: " + result)
 
         except Exception as err:
             result = str(err)
+            log.error(f"{self.digest_decrypted}: " + result)
 
         return result
