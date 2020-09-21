@@ -64,24 +64,32 @@ class Agent(Service):
 
     def exposed_push_policy(self, policy: bytes) -> str:
         """Ingest new FRR policy & apply."""
-        payload = self.verify_payload(policy)
+        result = "An unknown error occurred."
 
-        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        policy_file = OUTPUT_DIR / f"{self.digest_decrypted}.ios"
+        try:
+            payload = self.verify_payload(policy)
 
-        with policy_file.open("w") as f:
-            f.write(payload)
+            OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+            policy_file = OUTPUT_DIR / f"{self.digest_decrypted}.ios"
 
-        valid = validate_config(policy_file)
+            with policy_file.open("w") as f:
+                f.write(payload)
 
-        if not valid:
-            raise ValueError("Config %s failed validation.", self.digest_decrypted)
+            valid = validate_config(policy_file)
 
-        merged = merge_config(policy_file)
+            if not valid:
+                raise RuntimeError(f"Config {self.digest_decrypted} failed validation.")
 
-        if not merged:
-            raise RuntimeError(
-                "Merge of config %s failed, check the logs.", self.digest_decrypted
-            )
+            merged = merge_config(policy_file)
 
-        return f"Successfully Merged Configuration {self.digest_decrypted}"
+            if not merged:
+                raise RuntimeError(
+                    f"Merge of config {self.digest_decrypted} failed, check the logs."
+                )
+
+            result = f"Successfully Merged Configuration {self.digest_decrypted}"
+
+        except Exception as err:
+            result = str(err)
+
+        return result
