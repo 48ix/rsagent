@@ -30,6 +30,8 @@ class Agent(Service):
 
     def verify_payload(self, encrypted: bytes) -> str:
         """Verify that input data digest matches pre-sent digest."""
+        decrypted = b""
+
         if not all((self.digest_encrypted, self.digest_decrypted)):
             raise UnboundLocalError("No digests have been set.")
 
@@ -44,14 +46,18 @@ class Agent(Service):
 
         try:
             decrypted = encryption.decrypt(encrypted)
+
+            decrypted_input_digest = hashlib.sha256(decrypted).hexdigest()
+
+            if decrypted_input_digest != self.digest_decrypted:
+                log.error(
+                    "Invalid digest for decrypted data: %s", decrypted_input_digest
+                )
+                raise ValueError("Digest doesn't match decrypted data.")
+
         except InvalidToken:
             log.critical("Invalid token for data %s", encrypted_input_digest)
-
-        decrypted_input_digest = hashlib.sha256(decrypted).hexdigest()
-
-        if decrypted_input_digest != self.digest_decrypted:
-            log.error("Invalid digest for decrypted data: %s", decrypted_input_digest)
-            raise ValueError("Digest doesn't match decrypted data.")
+            raise ValueError("Invalid secret.")
 
         return decrypted.decode()
 
